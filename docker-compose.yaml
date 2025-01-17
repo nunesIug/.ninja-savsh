@@ -1,0 +1,33 @@
+version: '3.8'
+
+services: 
+  database: 
+    image: postgres:13-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: ${PG_DB}
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+    ports: 
+      - "${PG_PORT}:${PG_PORT}"
+    volumes: 
+      - "postgres_data:/var/lib/postgresql/data"
+
+  api:
+    build: . 
+    volumes: 
+      - .:/app
+    ports: 
+      - "8000:8000"
+    depends_on:
+      - database
+    environment:
+      DB_NAME: ${PG_DB}
+      DB_USER: ${PG_USER}
+      DB_PASSWORD: ${PG_PASSWORD}
+      DB_HOST: ${PG_HOST}
+      DB_PORT: ${PG_PORT}
+      
+volumes: 
+  postgres_data:
+    
